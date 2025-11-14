@@ -73,9 +73,8 @@
             programs.shfmt.enable = true;
           };
 
-          packages = {
+          checks = {
             inherit app;
-            default = app;
           };
 
           devShells.default = pkgs.mkShell {
