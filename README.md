@@ -9,6 +9,11 @@ A Gleam library for creating native GUIs using Erlang's wxWidgets (`wx`) binding
 
 The core logic is implemented in Erlang (`src/wx_gleam/internals/wx_ffi.erl`) and exposed to Gleam through FFI definitions (`src/wx_gleam/internals.gleam`).
 
+## Project Goals
+
+- **Goal**: To be able to write code in Gleam that is equivalent to using Erlang's `wx` module.
+- **Non-Goal**: Adding any unnecessary (or opinionated) abstractions in this library.
+
 ## Installation
 
 **Note: This package is not yet published to Hex.**
