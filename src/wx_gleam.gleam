@@ -38,8 +38,8 @@ pub fn connect_close_event(frame: WxFrame) -> Nil {
   internals.connect_close_event(frame)
 }
 
-pub fn await_close_message() -> Nil {
-  internals.await_close_message()
+pub fn await_close_message(handler: fn(dynamic.Dynamic) -> Nil) -> Nil {
+  internals.await_close_message(handler)
 }
 
 pub fn destroy() -> Nil {

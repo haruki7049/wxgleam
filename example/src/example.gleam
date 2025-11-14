@@ -1,3 +1,7 @@
+import gleam/dynamic
+import gleam/dynamic/decode
+import gleam/io
+import gleam/string
 import wx_gleam
 
 pub fn main() {
@@ -8,7 +12,17 @@ pub fn main() {
   wx_gleam.show_frame(wx_frame)
 
   wx_gleam.connect_close_event(wx_frame)
-  wx_gleam.await_close_message()
+  wx_gleam.await_close_message(message_handler)
 
   wx_gleam.destroy()
+}
+
+fn message_handler(message: dynamic.Dynamic) -> Nil {
+  case decode.run(message, decode.string) {
+    Ok(message_str) -> io.println(message_str)
+    Error(err) ->
+      err
+      |> string.inspect()
+      |> io.println_error()
+  }
 }

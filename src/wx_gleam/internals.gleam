@@ -29,7 +29,7 @@ pub fn create_button(
 pub fn connect_close_event(frame: WxFrame) -> Nil
 
 @external(erlang, "wx_ffi", "await_close_message")
-pub fn await_close_message() -> Nil
+pub fn await_close_message(handler: fn(dynamic.Dynamic) -> Nil) -> Nil
 
 @external(erlang, "wx_ffi", "destroy")
 pub fn destroy() -> Nil

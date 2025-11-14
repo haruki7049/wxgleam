@@ -4,7 +4,7 @@
          show_frame/1,
          create_button/3,
          connect_close_event/1,
-         await_close_message/0,
+         await_close_message/1,
          destroy/0]).
 
 % Here we include the wx.hrl file
@@ -56,15 +56,17 @@ connect_close_event(Frame) ->
     ok.
 
 
-% --- NEW: Block until the close event message arrives ---
-await_close_message() ->
+% --- MODIFIED: Block until close, but call Handler for other messages ---
+await_close_message(Handler) ->
     receive
         % Message matching wxEVT_CLOSE_WINDOW
         #wx{event = #wxClose{}} ->
             ok;  % Exit the loop
-        _OtherMessage ->
-            % Ignore other messages (such as wx events) and continue waiting
-            await_close_message()
+        OtherMessage ->
+            % Call the Gleam function (Handler)
+            Handler(OtherMessage),
+            % Continue waiting
+            await_close_message(Handler)
     end.
 
 
