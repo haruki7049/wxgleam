@@ -1,7 +1,8 @@
 # wx_gleam (WIP)
 
--[![Package Version](https://img.shields.io/hexpm/v/wx_gleam)](https://hex.pm/packages/wx_gleam)
--[![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/wx_gleam/)
+[![Package Version](https://img.shields.io/hexpm/v/wx_gleam)](https://hex.pm/packages/wx_gleam)
+[![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/wx_gleam/)
+
 *(Note: The Hex Docs badge is kept for future use, but may not be functional yet.)*
 
 A Gleam library for creating native GUIs using Erlang's wxWidgets (`wx`) bindings. This project provides a Gleam-friendly API by wrapping the underlying Erlang functions via the Foreign Function Interface (FFI).
