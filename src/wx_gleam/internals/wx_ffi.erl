@@ -13,14 +13,14 @@
 
 % Initialize wx and return the App object
 init_wx() ->
-    % --- 修正: application:start の戻り値をチェック ---
+    % --- Fix: Check the return value of application:start ---
     case application:start(wx) of
         ok ->
-            % 成功した場合のみ wx:new を呼ぶ
+            % Call wx:new only if successful
             WxApp = wx:new(),
             {ok, WxApp};
         {error, Reason} ->
-            % 失敗した場合、理由をGleamに返す
+            % If failed, return the reason to Gleam
             {error, Reason}
     end.
 
@@ -50,20 +50,20 @@ create_button(Frame, ID, Label) ->
     {ok, Button}.
 
 
-% --- NEW: ウィンドウのクローズイベントを指定されたPIDに送信する ---
+% --- NEW: Send the window close event to the specified PID ---
 connect_close_event(Frame) ->
     wxFrame:connect(Frame, close_window),
     ok.
 
 
-% --- NEW: クローズイベントのメッセージが来るまでブロックする ---
+% --- NEW: Block until the close event message arrives ---
 await_close_message() ->
     receive
-        % wxEVT_CLOSE_WINDOW に一致するメッセージ
+        % Message matching wxEVT_CLOSE_WINDOW
         #wx{event = #wxClose{}} ->
-            ok;  % ループを抜ける
+            ok;  % Exit the loop
         _OtherMessage ->
-            % 他のメッセージ (wx イベントなど) は無視して待機を続ける
+            % Ignore other messages (such as wx events) and continue waiting
             await_close_message()
     end.
 
