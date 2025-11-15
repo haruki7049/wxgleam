@@ -23,7 +23,8 @@
 %%% @doc Initialize the wxWidgets application and return the App object.
 %%%
 %%% This function starts the wx application and creates a new wx server instance.
-%%% It must be called before any other wx functions.
+%%% It must be called before any other wx functions. If the wx application is
+%%% already started, it will create a new wx instance without error.
 %%%
 %%% @returns `{ok, WxApp}' on success, or `{error, Reason}' if initialization fails
 %%% @end
@@ -34,8 +35,12 @@ init_wx() ->
             % Call wx:new only if application start was successful
             WxApp = wx:new(),
             {ok, WxApp};
+        {error, {already_started, wx}} ->
+            % Application already started, just create a new wx instance
+            WxApp = wx:new(),
+            {ok, WxApp};
         {error, Reason} ->
-            % If failed, return the reason to Gleam
+            % If failed for other reasons, return the error to Gleam
             {error, Reason}
     end.
 
