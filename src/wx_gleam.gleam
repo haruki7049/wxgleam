@@ -22,7 +22,18 @@ import gleam/dynamic
 import gleam/result
 import wx_gleam/internals
 
-// Re-export wx types and decoders for convenience
+// --- Message Types ---
+
+/// Represents a wxWidgets message (corresponds to Erlang's #wx{} record).
+///
+/// This is the main message type that is received when handling wx events.
+/// It contains:
+/// - `id`: Integer identity of the object
+/// - `obj`: Object reference that was used in the connect call
+/// - `user_data`: User data specified in the connect call
+/// - `event`: The specific event record (e.g., WxClose, WxCommand, etc.)
+///
+/// Use the `wx_decode` module to decode dynamic messages into this type.
 pub type WxMessage {
   WxMessage(
     id: Int,
@@ -32,6 +43,21 @@ pub type WxMessage {
   )
 }
 
+/// Represents different types of wx events.
+///
+/// This type corresponds to the various event records defined in Erlang's wx.hrl.
+/// Each variant represents a different kind of event that can occur in
+/// a wxWidgets application.
+///
+/// ## Event Types
+///
+/// - `WxClose`: Window close events
+/// - `WxCommand`: Command events (e.g., button clicks)
+/// - `WxFocus`: Focus change events
+/// - `WxKey`: Keyboard events
+/// - `WxMouse`: Mouse events
+/// - `WxSize`: Window resize events
+/// - `WxUnknown`: Unknown or not yet supported event types
 pub type WxEvent {
   WxClose(event_type: String)
   WxCommand(event_type: String, command_int: Int, command_string: String)

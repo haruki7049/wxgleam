@@ -5,6 +5,30 @@
 ////
 //// The decoders handle the conversion from Erlang's record format to
 //// Gleam's type-safe structures.
+////
+//// ## Example
+////
+//// ```gleam
+//// import wx_gleam/wx_decode
+//// import gleam/dynamic/decode
+////
+//// fn handle_message(msg: dynamic.Dynamic) -> Nil {
+////   case decode.run(msg, wx_decode.wx_message()) {
+////     Ok(wx_msg) -> {
+////       case wx_msg.event {
+////         wx_gleam.WxClose(event_type) -> {
+////           io.println("Window is closing: " <> event_type)
+////         }
+////         wx_gleam.WxCommand(event_type, _, _) -> {
+////           io.println("Command received: " <> event_type)
+////         }
+////         _ -> Nil
+////       }
+////     }
+////     Error(_) -> io.println_error("Failed to decode wx message")
+////   }
+//// }
+//// ```
 
 import gleam/dynamic
 import gleam/dynamic/decode
