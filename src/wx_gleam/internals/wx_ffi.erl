@@ -13,7 +13,7 @@
          show_frame/1,
          create_button/3,
          connect_close_event/1,
-         await_close_message/1,
+         apply_message_handler/1,
          destroy/0]).
 
 % Include the wxWidgets header file which defines macros and records
@@ -113,17 +113,13 @@ connect_close_event(Frame) ->
 %%% @param Handler A function that will be called with any non-close messages
 %%% @returns `ok' when a close event is received
 %%% @end
-await_close_message(Handler) ->
+apply_message_handler(Handler) ->
     receive
-        % Message matching wxEVT_CLOSE_WINDOW - exit the receive loop
-        #wx{event = #wxClose{}} ->
-            ok;
-        % Any other message - pass to the handler and continue waiting
-        OtherMessage ->
+        Message ->
             % Call the Gleam function (Handler) with the message
-            Handler(OtherMessage),
+            Handler(Message),
             % Continue waiting recursively
-            await_close_message(Handler)
+            apply_message_handler(Handler)
     end.
 
 

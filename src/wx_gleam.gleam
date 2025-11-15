@@ -14,13 +14,33 @@
 ////   let assert Ok(wx_frame) = wx_gleam.create_frame(wx_app, "My App")
 ////   wx_gleam.show_frame(wx_frame)
 ////   wx_gleam.connect_close_event(wx_frame)
-////   wx_gleam.await_close_message(fn(_) { Nil })
+////   wx_gleam.apply_message_handler(fn(_) { Nil })
 //// }
 //// ```
 
 import gleam/dynamic
 import gleam/result
 import wx_gleam/internals
+
+// Re-export wx types and decoders for convenience
+pub type WxMessage {
+  WxMessage(
+    id: Int,
+    obj: dynamic.Dynamic,
+    user_data: dynamic.Dynamic,
+    event: WxEvent,
+  )
+}
+
+pub type WxEvent {
+  WxClose(event_type: String)
+  WxCommand(event_type: String, command_int: Int, command_string: String)
+  WxFocus(event_type: String)
+  WxKey(event_type: String, key_code: Int)
+  WxMouse(event_type: String, x: Int, y: Int)
+  WxSize(event_type: String, width: Int, height: Int)
+  WxUnknown(data: dynamic.Dynamic)
+}
 
 // --- Type definitions ---
 
@@ -147,7 +167,7 @@ pub fn connect_close_event(frame: WxFrame) -> Nil {
   internals.connect_close_event(frame)
 }
 
-/// Waits for and handles close messages from the wx application.
+/// Handles wx's messages from the wx application.
 ///
 /// This function blocks until a close message is received, then calls the
 /// provided handler function with the message.
@@ -155,8 +175,8 @@ pub fn connect_close_event(frame: WxFrame) -> Nil {
 /// ## Parameters
 ///
 /// - `handler` - A function that will be called with the close message
-pub fn await_close_message(handler: fn(dynamic.Dynamic) -> Nil) -> Nil {
-  internals.await_close_message(handler)
+pub fn apply_message_handler(handler: fn(dynamic.Dynamic) -> Nil) -> Nil {
+  internals.apply_message_handler(handler)
 }
 
 /// Cleans up and destroys the wxWidgets application.

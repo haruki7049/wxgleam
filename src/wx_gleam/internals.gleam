@@ -98,15 +98,15 @@ pub fn create_button(
 @external(erlang, "wx_ffi", "connect_close_event")
 pub fn connect_close_event(frame: WxFrame) -> Nil
 
-/// Waits for and handles close messages from the wx application via FFI.
+/// Handles wx's messages from the wx application via FFI.
 ///
 /// This is the Erlang FFI binding that blocks until a close message is received.
 ///
 /// ## Parameters
 ///
 /// - `handler` - A function that will be called with the close message
-@external(erlang, "wx_ffi", "await_close_message")
-pub fn await_close_message(handler: fn(dynamic.Dynamic) -> Nil) -> Nil
+@external(erlang, "wx_ffi", "apply_message_handler")
+pub fn apply_message_handler(handler: fn(dynamic.Dynamic) -> Nil) -> Nil
 
 /// Cleans up and destroys the wxWidgets application via FFI.
 ///
