@@ -48,7 +48,7 @@ fn message_handler(message: dynamic.Dynamic) -> Nil {
     Ok(wx_msg) -> {
       io.println("Received wx message:")
       io.println("  ID: " <> string.inspect(wx_msg.id))
-      
+
       case wx_msg.event {
         wx_gleam.WxClose(event_type) -> {
           io.println("  Event: Close (" <> event_type <> ")")
@@ -67,11 +67,19 @@ fn message_handler(message: dynamic.Dynamic) -> Nil {
         }
         wx_gleam.WxMouse(event_type, x, y) -> {
           io.println("  Event: Mouse (" <> event_type <> ")")
-          io.println("  Position: (" <> string.inspect(x) <> ", " <> string.inspect(y) <> ")")
+          io.println(
+            "  Position: ("
+            <> string.inspect(x)
+            <> ", "
+            <> string.inspect(y)
+            <> ")",
+          )
         }
         wx_gleam.WxSize(event_type, width, height) -> {
           io.println("  Event: Size (" <> event_type <> ")")
-          io.println("  Size: " <> string.inspect(width) <> "x" <> string.inspect(height))
+          io.println(
+            "  Size: " <> string.inspect(width) <> "x" <> string.inspect(height),
+          )
         }
         wx_gleam.WxUnknown(_) -> {
           io.println("  Event: Unknown/Unsupported")

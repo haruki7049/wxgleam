@@ -8,7 +8,6 @@
 
 import gleam/dynamic
 import gleam/dynamic/decode
-import gleam/result
 import gleam/string
 import wx_gleam.{type WxEvent, type WxMessage}
 

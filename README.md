@@ -28,14 +28,17 @@ wx_gleam = { path = ".." }
 
 ## Usage
 
-Here is a basic example of how to initialize a `wx` application, create a window (Frame) with a button, and wait for the window to be closed.
+### Basic Example
+
+Here is a basic example of how to initialize a `wx` application, create a window (Frame) with a button, and handle wx messages.
 
 ```gleam
 import wx_gleam
+import wx_gleam/wx_decode
+import gleam/dynamic/decode
 
 pub fn main() {
-  // Initialize the wx application
-  let assert Ok(wx_app) = wx_gleam.init_wx()
+  use wx_app <- wx_gleam.with_app()
 
   // Create a frame (window)
   let assert Ok(wx_frame) = wx_gleam.create_frame(wx_app, "Gleam WxApp")
@@ -46,16 +49,47 @@ pub fn main() {
   // Show the frame
   wx_gleam.show_frame(wx_frame)
 
-  // Connect the close event and wait for the close message
+  // Connect the close event and handle messages
   wx_gleam.connect_close_event(wx_frame)
-  wx_gleam.await_close_message()
+  wx_gleam.apply_message_handler(message_handler)
+}
 
-  // Clean up and destroy the wx application
-  wx_gleam.destroy()
+fn message_handler(message: dynamic.Dynamic) -> Nil {
+  case decode.run(message, wx_decode.wx_message()) {
+    Ok(wx_msg) -> {
+      case wx_msg.event {
+        wx_gleam.WxClose(_) -> {
+          // Handle close event
+        }
+        _ -> {
+          // Handle other events
+        }
+      }
+    }
+    Error(_) -> {
+      // Handle decode error
+    }
+  }
 }
 ```
 
 *\[Source: `example/src/example.gleam`\]*
+
+### Message Types
+
+The library now provides type-safe message handling with the following types:
+
+- `WxMessage`: The main message type containing event information
+- `WxEvent`: Various event types including:
+  - `WxClose`: Window close events
+  - `WxCommand`: Command/button events
+  - `WxFocus`: Focus events
+  - `WxKey`: Keyboard events
+  - `WxMouse`: Mouse events
+  - `WxSize`: Resize events
+  - `WxUnknown`: Unknown or unsupported event types
+
+Use the `wx_decode` module to decode dynamic messages into type-safe Gleam structures.
 
 ## Development
 
