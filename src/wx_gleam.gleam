@@ -22,6 +22,13 @@ import gleam/dynamic
 import gleam/result
 import wx_gleam/internals
 
+// --- Helper functions ---
+
+/// Maps any error to Nil, hiding internal error details from the public API.
+fn map_error_to_nil(result: Result(a, b)) -> Result(a, Nil) {
+  result.map_error(result, fn(_) { Nil })
+}
+
 // --- Type definitions ---
 
 /// Represents a wxWidgets application instance.
@@ -105,7 +112,7 @@ pub fn with_app(mainloop: fn(WxApp) -> Nil) -> Nil {
 /// - `Error(Nil)` - An error if frame creation fails
 pub fn create_frame(app: WxApp, title: String) -> Result(WxFrame, Nil) {
   internals.create_frame(app, title)
-  |> result.map_error(fn(_) { Nil })
+  |> map_error_to_nil
 }
 
 /// Makes a frame visible on the screen.
@@ -132,7 +139,7 @@ pub fn show_frame(frame: WxFrame) -> Nil {
 /// - `Error(Nil)` - An error if button creation fails
 pub fn create_button(frame: WxFrame, label: String) -> Result(WxButton, Nil) {
   internals.create_button(frame, id_any, label)
-  |> result.map_error(fn(_) { Nil })
+  |> map_error_to_nil
 }
 
 /// Connects a close event handler to a frame.
