@@ -60,7 +60,12 @@ pub type WxMessage {
 /// - `WxUnknown`: Unknown or not yet supported event types
 pub type WxEvent {
   WxClose(event_type: String)
-  WxCommand(event_type: String, command_int: Int, command_string: String)
+  WxCommand(
+    event_type: String,
+    cmd_string: String,
+    command_int: Int,
+    extra_long: Int,
+  )
   WxFocus(event_type: String)
   WxKey(event_type: String, key_code: Int)
   WxMouse(event_type: String, x: Int, y: Int)

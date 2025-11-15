@@ -53,10 +53,11 @@ fn message_handler(message: dynamic.Dynamic) -> Nil {
         wx_gleam.WxClose(event_type) -> {
           io.println("  Event: Close (" <> event_type <> ")")
         }
-        wx_gleam.WxCommand(event_type, cmd_int, cmd_str) -> {
+        wx_gleam.WxCommand(event_type, cmd_str, cmd_int, extra_long) -> {
           io.println("  Event: Command (" <> event_type <> ")")
-          io.println("  Command Int: " <> string.inspect(cmd_int))
           io.println("  Command String: " <> cmd_str)
+          io.println("  Command Int: " <> string.inspect(cmd_int))
+          io.println("  Extra Long: " <> string.inspect(extra_long))
         }
         wx_gleam.WxFocus(event_type) -> {
           io.println("  Event: Focus (" <> event_type <> ")")

@@ -90,14 +90,20 @@ fn wx_close_event() -> decode.Decoder(WxEvent) {
 
 /// Decodes a wxCommand event.
 fn wx_command_event() -> decode.Decoder(WxEvent) {
-  // #wxCommand{type = Type, commandInt = Int, commandString = String}
-  decode.decode3(
-    fn(event_type, cmd_int, cmd_str) {
-      wx_gleam.WxCommand(string.inspect(event_type), cmd_int, cmd_str)
+  // #wxCommand{type = Type, cmdString = String, commandInt = Int, extraLong = Long}
+  decode.decode4(
+    fn(event_type, cmd_str, cmd_int, extra_long) {
+      wx_gleam.WxCommand(
+        string.inspect(event_type),
+        cmd_str,
+        cmd_int,
+        extra_long,
+      )
     },
     decode.element(1, decode.dynamic),
-    decode.element(2, decode.int),
-    decode.element(3, decode.string),
+    decode.element(2, decode.string),
+    decode.element(3, decode.int),
+    decode.element(4, decode.int),
   )
 }
 
