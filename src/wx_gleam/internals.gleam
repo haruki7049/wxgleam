@@ -115,6 +115,7 @@ pub fn create_button(
 /// ## Parameters
 ///
 /// - `frame` - The WxFrame to connect the close event to
+@deprecated("This function is deprecated and will be removed in a future version")
 @external(erlang, "wx_ffi", "connect_close_event")
 pub fn connect_close_event(frame: WxFrame) -> Nil
 

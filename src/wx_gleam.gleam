@@ -419,6 +419,7 @@ pub fn create_button(frame: WxFrame, label: String) -> Result(WxButton, Nil) {
 ///
 /// Without calling this function, close events will not be sent to your
 /// application, and `await_close_event()` will block indefinitely.
+@deprecated("This function is deprecated and will be removed in a future version")
 pub fn connect_close_event(frame: WxFrame) -> Nil {
   internals.connect_close_event(frame)
 }
