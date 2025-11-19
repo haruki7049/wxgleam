@@ -20,7 +20,7 @@ The core logic is implemented in Erlang (`src/wx_gleam/internals/wx_ffi.erl`) an
 ## Current Limitations
 
 - ⚠️ **Work in Progress**: This library is still in early development
-- ⚠️ **Limited Widgets**: Currently supports basic frames and buttons only
+- ⚠️ **Limited Widgets**: Currently supports basic frames, buttons, and text controls only
 - ⚠️ **No Event Handlers**: Button click events are not yet implemented
 - ⚠️ **Not on Hex**: Must be used as a path dependency for now
 - ⚠️ **Basic Layout**: No layout managers yet (widgets use default positioning)
@@ -95,9 +95,9 @@ wx_gleam = { path = ".." }
 
 ## Usage
 
-### Quick Start with `with_app`, `with_frame`, and `with_button`
+### Quick Start with `with_app`, `with_frame`, and widgets
 
-The recommended way to use wx_gleam is with the `with_app`, `with_frame`, and `with_button` functions, which handle initialization and cleanup automatically:
+The recommended way to use wx_gleam is with the `with_app`, `with_frame`, and widget helper functions, which handle initialization and cleanup automatically:
 
 ```gleam
 import wx_gleam
@@ -109,7 +109,10 @@ pub fn main() {
   // Use the with_frame helper for automatic frame creation
   use frame <- wx_gleam.with_frame(wx_app, "Gleam WxApp")
   
-  // Use the with_button helper for automatic button creation
+  // Create a text control for user input
+  use _text_ctrl <- wx_gleam.with_text_ctrl(frame, "Enter text here...")
+  
+  // Create a button
   use _button <- wx_gleam.with_button(frame, "Click Me!")
 
   // Show the frame
@@ -130,7 +133,8 @@ pub fn main() {
   use wx_app <- wx_gleam.with_app()
   use frame <- wx_gleam.with_frame(wx_app, "Gleam WxApp")
 
-  // Create a button explicitly if you prefer
+  // Create widgets explicitly if you prefer
+  let assert Ok(_text_ctrl) = wx_gleam.create_text_ctrl(frame, "Type here")
   let assert Ok(_button) = wx_gleam.create_button(frame, "Click Me!")
 
   wx_gleam.show_frame(frame)
@@ -148,6 +152,7 @@ pub fn main() {
   use wx_app <- wx_gleam.with_app()
 
   let assert Ok(wx_frame) = wx_gleam.create_frame(wx_app, "Gleam WxApp")
+  let assert Ok(_text_ctrl) = wx_gleam.create_text_ctrl(wx_frame, "Type here")
   let assert Ok(_button) = wx_gleam.create_button(wx_frame, "Click Me!")
 
   wx_gleam.show_frame(wx_frame)
@@ -170,7 +175,8 @@ pub fn main() {
   // Create a frame (window)
   let assert Ok(wx_frame) = wx_gleam.create_frame(wx_app, "Gleam WxApp")
 
-  // Create a button inside the frame
+  // Create widgets inside the frame
+  let assert Ok(_text_ctrl) = wx_gleam.create_text_ctrl(wx_frame, "Type here")
   let assert Ok(_button) = wx_gleam.create_button(wx_frame, "Click Me!")
 
   // Show the frame
@@ -193,9 +199,11 @@ The wx_gleam library provides a simple, high-level API for common GUI operations
 - **`with_app()`** - Convenience wrapper that handles initialization and cleanup
 - **`with_frame()`** - Convenience wrapper that handles frame creation using `use` syntax
 - **`with_button()`** - Convenience wrapper that handles button creation using `use` syntax
+- **`with_text_ctrl()`** - Convenience wrapper that handles text control creation using `use` syntax
 - **`create_frame()`** - Create a new window with a title
 - **`show_frame()`** - Make a window visible on screen
 - **`create_button()`** - Create a button widget inside a frame
+- **`create_text_ctrl()`** - Create a text control widget inside a frame
 - **`connect_close_event()`** - Enable close event handling for a window
 - **`await_close_message()`** - Wait for the user to close a window
 - **`destroy()`** - Clean up and shut down the wx application
