@@ -16,7 +16,7 @@
 ////
 //// The simplest way to use wx_gleam is with the `with_app` function, which
 //// handles initialization and cleanup automatically. You can also combine it
-//// with `with_frame` for cleaner frame creation:
+//// with `with_frame` and `with_button` for cleaner resource management:
 ////
 //// ```gleam
 //// import wx_gleam
@@ -24,8 +24,8 @@
 //// pub fn main() {
 ////   use wx_app <- wx_gleam.with_app()
 ////   use frame <- wx_gleam.with_frame(wx_app, "My App")
+////   use _button <- wx_gleam.with_button(frame, "Click Me!")
 ////   
-////   let assert Ok(_button) = wx_gleam.create_button(frame, "Click Me!")
 ////   wx_gleam.show_frame(frame)
 ////   wx_gleam.connect_close_event(frame)
 ////   wx_gleam.await_close_message(fn(_) { Nil })
@@ -242,6 +242,56 @@ pub fn with_frame(
 
   // Run mainloop which is defined by User
   mainloop(frame)
+}
+
+/// A convenience function that creates a button, runs a mainloop with it,
+/// and handles the setup automatically.
+///
+/// This function provides a convenient way to work with buttons using Gleam's
+/// `use` syntax. It creates a button with the specified label and passes it to
+/// your mainloop function. This is useful when you want to encapsulate button
+/// creation and usage in a clean, resource-safe pattern.
+///
+/// ## Parameters
+///
+/// - `frame` - The WxFrame parent that will contain the button
+/// - `label` - The text to display on the button
+/// - `mainloop` - A function that receives the WxButton instance and contains
+///   your button-specific logic. This function will be executed after the button
+///   is created.
+///
+/// ## Behavior
+///
+/// 1. Creates a new button with the specified label (asserts success)
+/// 2. Executes your mainloop function with the WxButton instance
+/// 3. Returns after the mainloop completes
+///
+/// ## Example
+///
+/// ```gleam
+/// use wx_app <- wx_gleam.with_app()
+/// use frame <- wx_gleam.with_frame(wx_app, "My Window")
+/// use button <- wx_gleam.with_button(frame, "Click Me!")
+/// 
+/// // Button is now created and available
+/// show_frame(frame)
+/// connect_close_event(frame)
+/// await_close_message(fn(_) { Nil })
+/// ```
+///
+/// ## Note
+///
+/// This function will panic if button creation fails. If you need to handle
+/// button creation errors, use `create_button()` directly.
+pub fn with_button(
+  frame: WxFrame,
+  label: String,
+  mainloop: fn(WxButton) -> Nil,
+) -> Nil {
+  let assert Ok(button): Result(WxButton, Nil) = create_button(frame, label)
+
+  // Run mainloop which is defined by User
+  mainloop(button)
 }
 
 /// Creates a new frame (window) with the specified title.

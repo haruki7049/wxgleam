@@ -95,9 +95,9 @@ wx_gleam = { path = ".." }
 
 ## Usage
 
-### Quick Start with `with_app` and `with_frame`
+### Quick Start with `with_app`, `with_frame`, and `with_button`
 
-The recommended way to use wx_gleam is with the `with_app` and `with_frame` functions, which handle initialization and cleanup automatically:
+The recommended way to use wx_gleam is with the `with_app`, `with_frame`, and `with_button` functions, which handle initialization and cleanup automatically:
 
 ```gleam
 import wx_gleam
@@ -108,14 +108,32 @@ pub fn main() {
   
   // Use the with_frame helper for automatic frame creation
   use frame <- wx_gleam.with_frame(wx_app, "Gleam WxApp")
-
-  // Create a button inside the frame
-  let assert Ok(_button) = wx_gleam.create_button(frame, "Click Me!")
+  
+  // Use the with_button helper for automatic button creation
+  use _button <- wx_gleam.with_button(frame, "Click Me!")
 
   // Show the frame
   wx_gleam.show_frame(frame)
 
   // Connect the close event and wait for the close message
+  wx_gleam.connect_close_event(frame)
+  wx_gleam.await_close_message(fn(_) { Nil })
+}
+```
+
+You can also mix the `use` syntax with explicit creation if needed:
+
+```gleam
+import wx_gleam
+
+pub fn main() {
+  use wx_app <- wx_gleam.with_app()
+  use frame <- wx_gleam.with_frame(wx_app, "Gleam WxApp")
+
+  // Create a button explicitly if you prefer
+  let assert Ok(_button) = wx_gleam.create_button(frame, "Click Me!")
+
+  wx_gleam.show_frame(frame)
   wx_gleam.connect_close_event(frame)
   wx_gleam.await_close_message(fn(_) { Nil })
 }
@@ -174,6 +192,7 @@ The wx_gleam library provides a simple, high-level API for common GUI operations
 - **`init_wx()`** - Initialize the wx application (returns `Result(WxApp, Dynamic)`)
 - **`with_app()`** - Convenience wrapper that handles initialization and cleanup
 - **`with_frame()`** - Convenience wrapper that handles frame creation using `use` syntax
+- **`with_button()`** - Convenience wrapper that handles button creation using `use` syntax
 - **`create_frame()`** - Create a new window with a title
 - **`show_frame()`** - Make a window visible on screen
 - **`create_button()`** - Create a button widget inside a frame
