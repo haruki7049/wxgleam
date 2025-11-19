@@ -11,19 +11,19 @@ The core logic is implemented in Erlang (`src/wx_gleam/internals/wx_ffi.erl`) an
 
 ## Features
 
-✅ **Native GUI**: Uses wxWidgets for truly native look and feel on all platforms\
-✅ **Cross-Platform**: Works on Linux, macOS, and Windows\
-✅ **Type-Safe**: Leverages Gleam's type system for compile-time safety\
-✅ **Minimal Overhead**: Thin wrapper with minimal abstractions\
-✅ **Erlang Integration**: Seamlessly integrates with the BEAM ecosystem
+- ✅ **Native GUI**: Uses wxWidgets for truly native look and feel on all platforms
+- ✅ **Cross-Platform**: Works on Linux, macOS, and Windows
+- ✅ **Type-Safe**: Leverages Gleam's type system for compile-time safety
+- ✅ **Minimal Overhead**: Thin wrapper with minimal abstractions
+- ✅ **Erlang Integration**: Seamlessly integrates with the BEAM ecosystem
 
 ## Current Limitations
 
-⚠️ **Work in Progress**: This library is still in early development\
-⚠️ **Limited Widgets**: Currently supports basic frames and buttons only\
-⚠️ **No Event Handlers**: Button click events are not yet implemented\
-⚠️ **Not on Hex**: Must be used as a path dependency for now\
-⚠️ **Basic Layout**: No layout managers yet (widgets use default positioning)
+- **Work in Progress**: This library is still in early development
+- **Limited Widgets**: Currently supports basic frames and buttons only
+- **No Event Handlers**: Button click events are not yet implemented
+- **Not on Hex**: Must be used as a path dependency for now
+- **Basic Layout**: No layout managers yet (widgets use default positioning)
 
 Future development will expand widget support and add more wxWidgets functionality.
 
