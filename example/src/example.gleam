@@ -2,12 +2,13 @@
 ////
 //// This example creates a simple wxWidgets window with a button and demonstrates
 //// the basic usage of the wx_gleam API. It showcases the recommended pattern
-//// using the `with_app` convenience function for automatic resource management.
+//// using the `with_app` and `with_frame` convenience functions for automatic 
+//// resource management.
 ////
 //// ## What This Example Demonstrates
 ////
 //// - Using `with_app()` for automatic initialization and cleanup
-//// - Creating a frame (window) with a custom title
+//// - Using `with_frame()` for automatic frame creation with `use` syntax
 //// - Adding a button widget to the frame
 //// - Making the window visible with `show_frame()`
 //// - Connecting close event handlers
@@ -33,13 +34,13 @@ import wx_gleam
 ///
 /// Creates a simple wxWidgets window with a "Click Me!" button and waits
 /// for the user to close the window. This function demonstrates the recommended
-/// pattern using `with_app()` which automatically handles wx initialization
-/// and cleanup.
+/// pattern using `with_app()` and `with_frame()` which automatically handle wx 
+/// initialization and frame creation.
 ///
 /// ## Application Flow
 ///
 /// 1. Initialize wx application using `with_app()`
-/// 2. Create a 400x300 pixel frame titled "Gleam WxApp"
+/// 2. Create a 400x300 pixel frame titled "Gleam WxApp" using `with_frame()`
 /// 3. Add a button labeled "Click Me!" to the frame
 /// 4. Make the frame visible on screen
 /// 5. Connect the close event handler
@@ -47,13 +48,13 @@ import wx_gleam
 /// 7. Automatic cleanup by `with_app()`
 pub fn main() {
   use wx_app: wx_gleam.WxApp <- wx_gleam.with_app()
+  use frame <- wx_gleam.with_frame(wx_app, "Gleam WxApp")
 
-  let assert Ok(wx_frame) = wx_gleam.create_frame(wx_app, "Gleam WxApp")
-  let assert Ok(_button) = wx_gleam.create_button(wx_frame, "Click Me!")
+  let assert Ok(_button) = wx_gleam.create_button(frame, "Click Me!")
 
-  wx_gleam.show_frame(wx_frame)
+  wx_gleam.show_frame(frame)
 
-  wx_gleam.connect_close_event(wx_frame)
+  wx_gleam.connect_close_event(frame)
   wx_gleam.await_close_message(message_handler)
 }
 

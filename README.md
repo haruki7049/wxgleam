@@ -95,9 +95,9 @@ wx_gleam = { path = ".." }
 
 ## Usage
 
-### Quick Start with `with_app`
+### Quick Start with `with_app` and `with_frame`
 
-The recommended way to use wx_gleam is with the `with_app` function, which handles initialization and cleanup automatically:
+The recommended way to use wx_gleam is with the `with_app` and `with_frame` functions, which handle initialization and cleanup automatically:
 
 ```gleam
 import wx_gleam
@@ -105,23 +105,38 @@ import wx_gleam
 pub fn main() {
   // Use the with_app helper for automatic initialization and cleanup
   use wx_app <- wx_gleam.with_app()
-
-  // Create a frame (window)
-  let assert Ok(wx_frame) = wx_gleam.create_frame(wx_app, "Gleam WxApp")
+  
+  // Use the with_frame helper for automatic frame creation
+  use frame <- wx_gleam.with_frame(wx_app, "Gleam WxApp")
 
   // Create a button inside the frame
-  let assert Ok(_button) = wx_gleam.create_button(wx_frame, "Click Me!")
+  let assert Ok(_button) = wx_gleam.create_button(frame, "Click Me!")
 
   // Show the frame
-  wx_gleam.show_frame(wx_frame)
+  wx_gleam.show_frame(frame)
 
   // Connect the close event and wait for the close message
-  wx_gleam.connect_close_event(wx_frame)
+  wx_gleam.connect_close_event(frame)
   wx_gleam.await_close_message(fn(_) { Nil })
 }
 ```
 
-*\[Source: `example/src/example.gleam`\]*
+You can also use `with_app` without `with_frame` if you prefer explicit frame creation:
+
+```gleam
+import wx_gleam
+
+pub fn main() {
+  use wx_app <- wx_gleam.with_app()
+
+  let assert Ok(wx_frame) = wx_gleam.create_frame(wx_app, "Gleam WxApp")
+  let assert Ok(_button) = wx_gleam.create_button(wx_frame, "Click Me!")
+
+  wx_gleam.show_frame(wx_frame)
+  wx_gleam.connect_close_event(wx_frame)
+  wx_gleam.await_close_message(fn(_) { Nil })
+}
+```
 
 ### Manual Initialization
 
@@ -158,6 +173,7 @@ The wx_gleam library provides a simple, high-level API for common GUI operations
 
 - **`init_wx()`** - Initialize the wx application (returns `Result(WxApp, Dynamic)`)
 - **`with_app()`** - Convenience wrapper that handles initialization and cleanup
+- **`with_frame()`** - Convenience wrapper that handles frame creation using `use` syntax
 - **`create_frame()`** - Create a new window with a title
 - **`show_frame()`** - Make a window visible on screen
 - **`create_button()`** - Create a button widget inside a frame
