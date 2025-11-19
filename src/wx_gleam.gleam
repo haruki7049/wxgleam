@@ -109,6 +109,21 @@ pub type WxFrame =
 pub type WxButton =
   internals.WxButton
 
+/// Represents a wxWidgets text control.
+///
+/// A text control is a GUI control that allows users to enter and edit text.
+/// It can display single or multiple lines of text and supports various text
+/// editing operations.
+///
+/// ## Properties
+///
+/// - Displays text that can be edited by the user
+/// - Supports keyboard input and text selection
+/// - Must be a child of a frame or other container widget
+/// - Automatically assigned an ID if created with `create_text_ctrl()`
+pub type WxTextCtrl =
+  internals.WxTextCtrl
+
 // --- Constants ---
 
 /// A constant representing wxID_ANY (-1).
@@ -296,6 +311,58 @@ pub fn with_button(
   mainloop(button)
 }
 
+/// A convenience function that creates a text control, runs a mainloop with it,
+/// and handles the setup automatically.
+///
+/// This function provides a convenient way to work with text controls using 
+/// Gleam's `use` syntax. It creates a text control with the specified initial
+/// value and passes it to your mainloop function. This is useful when you want
+/// to encapsulate text control creation and usage in a clean, resource-safe
+/// pattern.
+///
+/// ## Parameters
+///
+/// - `frame` - The WxFrame parent that will contain the text control
+/// - `value` - The initial text to display in the text control
+/// - `mainloop` - A function that receives the WxTextCtrl instance and contains
+///   your text control-specific logic. This function will be executed after the
+///   text control is created.
+///
+/// ## Behavior
+///
+/// 1. Creates a new text control with the specified value (asserts success)
+/// 2. Executes your mainloop function with the WxTextCtrl instance
+/// 3. Returns after the mainloop completes
+///
+/// ## Example
+///
+/// ```gleam
+/// use wx_app <- wx_gleam.with_app()
+/// use frame <- wx_gleam.with_frame(wx_app, "My Window")
+/// use text_ctrl <- wx_gleam.with_text_ctrl(frame, "Enter text here")
+/// 
+/// // Text control is now created and available
+/// show_frame(frame)
+/// connect_close_event(frame)
+/// await_close_event(fn(_) { Nil })
+/// ```
+///
+/// ## Note
+///
+/// This function will panic if text control creation fails. If you need to
+/// handle text control creation errors, use `create_text_ctrl()` directly.
+pub fn with_text_ctrl(
+  frame: WxFrame,
+  value: String,
+  mainloop: fn(WxTextCtrl) -> Nil,
+) -> Nil {
+  let assert Ok(text_ctrl): Result(WxTextCtrl, Nil) =
+    create_text_ctrl(frame, value)
+
+  // Run mainloop which is defined by User
+  mainloop(text_ctrl)
+}
+
 /// Creates a new frame (window) with the specified title.
 ///
 /// A frame is a top-level window that can contain other GUI components like
@@ -383,6 +450,46 @@ pub fn show_frame(frame: WxFrame) -> Nil {
 /// the lower-level FFI functions in the `internals` module.
 pub fn create_button(frame: WxFrame, label: String) -> Result(WxButton, Nil) {
   internals.create_button(frame, id_any, label)
+  |> result.map_error(fn(_) { Nil })
+}
+
+/// Creates a text control with the specified initial value inside a frame.
+///
+/// The text control is created as a child widget of the specified frame and will
+/// be automatically assigned an ID using wxID_ANY (-1). The text control will be
+/// visible within the frame's client area and allows users to enter text.
+///
+/// ## Parameters
+///
+/// - `frame` - The parent frame that will contain the text control. The text
+///   control will be positioned within this frame's client area.
+/// - `value` - The initial text to display in the text control. This can be an
+///   empty string if you want the control to start empty.
+///
+/// ## Returns
+///
+/// - `Ok(WxTextCtrl)` - The created text control on success
+/// - `Error(Nil)` - An error if text control creation fails (rare, but possible
+///   if the frame is invalid or the wx system is in an invalid state)
+///
+/// ## Example
+///
+/// ```gleam
+/// let assert Ok(frame) = create_frame(wx_app, "My Window")
+/// let assert Ok(text_ctrl) = create_text_ctrl(frame, "Enter text here")
+/// show_frame(frame)
+/// ```
+///
+/// ## Note
+///
+/// This is a convenience function that uses `id_any` constant internally. For
+/// more control over text control IDs or to handle text events, you may need to
+/// use the lower-level FFI functions in the `internals` module.
+pub fn create_text_ctrl(
+  frame: WxFrame,
+  value: String,
+) -> Result(WxTextCtrl, Nil) {
+  internals.create_text_ctrl(frame, id_any, value)
   |> result.map_error(fn(_) { Nil })
 }
 

@@ -30,23 +30,25 @@ import wx_gleam/events
 
 /// Entry point for the example application.
 ///
-/// Creates a simple wxWidgets window with a "Click Me!" button and waits
+/// Creates a simple wxWidgets window with a text control and a button, and waits
 /// for the user to close the window. This function demonstrates the recommended
-/// pattern using `with_app()`, `with_frame()`, and `with_button()` which 
-/// automatically handle wx initialization, frame creation, and button creation.
+/// pattern using `with_app()`, `with_frame()`, `with_text_ctrl()`, and 
+/// `with_button()` which automatically handle wx initialization and widget creation.
 ///
 /// ## Application Flow
 ///
 /// 1. Initialize wx application using `with_app()`
 /// 2. Create a 400x300 pixel frame titled "Gleam WxApp" using `with_frame()`
-/// 3. Add a button labeled "Click Me!" to the frame using `with_button()`
-/// 4. Make the frame visible on screen
-/// 5. Connect the close event handler
-/// 6. Wait for user to close the window (blocking call)
-/// 7. Automatic cleanup by `with_app()`
+/// 3. Add a text control with placeholder text using `with_text_ctrl()`
+/// 4. Add a button labeled "Click Me!" to the frame using `with_button()`
+/// 5. Make the frame visible on screen
+/// 6. Connect the close event handler
+/// 7. Wait for user to close the window (blocking call)
+/// 8. Automatic cleanup by `with_app()`
 pub fn main() {
   use wx_app: wx_gleam.WxApp <- wx_gleam.with_app()
   use frame <- wx_gleam.with_frame(wx_app, "Gleam WxApp")
+  use _text_ctrl <- wx_gleam.with_text_ctrl(frame, "Enter text here...")
   use _button <- wx_gleam.with_button(frame, "Click Me!")
 
   wx_gleam.show_frame(frame)

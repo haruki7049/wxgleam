@@ -28,6 +28,7 @@
          create_frame/2,
          show_frame/1,
          create_button/3,
+         create_text_ctrl/3,
          connect_close_event/1,
          await_close_message/1,
          destroy/0]).
@@ -144,6 +145,38 @@ create_button(Frame, ID, Label) ->
     % Create a button as a child of the Frame
     Button = wxButton:new(Frame, ID, [{label, LabelList}]),
     {ok, Button}.
+
+
+%%% @doc Create a text control widget with the specified initial value.
+%%%
+%%% This function creates a wxTextCtrl as a child widget of the specified frame.
+%%% The text control allows users to enter and edit text. It will be visible
+%%% within the frame's client area.
+%%%
+%%% <h3>Type Conversion</h3>
+%%% <p>The value parameter is a Gleam string (binary) which is converted to an
+%%% Erlang string (list) using `binary_to_list/1' before being passed to wxTextCtrl.</p>
+%%%
+%%% <h3>Text Control Properties</h3>
+%%% <ul>
+%%%   <li>Parent: The specified frame</li>
+%%%   <li>ID: As specified (use -1 for wxID_ANY to auto-assign)</li>
+%%%   <li>Value: The initial text displayed in the control</li>
+%%%   <li>Size: Automatically sized to fit within the frame</li>
+%%% </ul>
+%%%
+%%% @param Frame The parent frame that will contain the text control
+%%% @param ID The widget ID (use -1 for wxID_ANY to let wx auto-assign an ID)
+%%% @param Value The initial text value as a binary string (Gleam String)
+%%% @returns `{ok, TextCtrl}' with the created text control reference. The text
+%%%          control is guaranteed to be valid and ready to use.
+%%% @end
+create_text_ctrl(Frame, ID, Value) ->
+    % Convert Gleam's String (Binary) to Erlang's String (List) for the value
+    ValueList = binary_to_list(Value),
+    % Create a text control as a child of the Frame
+    TextCtrl = wxTextCtrl:new(Frame, ID, [{value, ValueList}]),
+    {ok, TextCtrl}.
 
 
 %%% @doc Connect a close event handler to a frame.

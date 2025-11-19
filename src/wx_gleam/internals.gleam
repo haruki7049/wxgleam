@@ -47,6 +47,13 @@ pub type WxFrame
 /// Erlang wx system.
 pub type WxButton
 
+/// Opaque type representing a wxWidgets text control.
+///
+/// This type is implemented in Erlang and represents the underlying wx
+/// text control object. It is an opaque reference to a wxTextCtrl widget
+/// in the Erlang wx system.
+pub type WxTextCtrl
+
 /// Initializes the wxWidgets application via FFI.
 ///
 /// This is the Erlang FFI binding that creates and initializes a wx application.
@@ -127,6 +134,27 @@ pub fn connect_close_event(frame: WxFrame) -> Nil
 /// - `handler` - A function that will be called with the close message
 @external(erlang, "wx_ffi", "await_close_message")
 pub fn await_close_message(handler: fn(dynamic.Dynamic) -> Nil) -> Nil
+
+/// Creates a text control with the specified ID and initial value inside a frame via FFI.
+///
+/// This is the Erlang FFI binding that creates a wx text control.
+///
+/// ## Parameters
+///
+/// - `frame` - The parent frame that will contain the text control
+/// - `id` - The widget ID (use -1 for wxID_ANY)
+/// - `value` - The initial text to display in the text control
+///
+/// ## Returns
+///
+/// - `Ok(WxTextCtrl)` - The created text control on success
+/// - `Error(dynamic.Dynamic)` - An error if text control creation fails
+@external(erlang, "wx_ffi", "create_text_ctrl")
+pub fn create_text_ctrl(
+  frame: WxFrame,
+  id: Int,
+  value: String,
+) -> Result(WxTextCtrl, dynamic.Dynamic)
 
 /// Cleans up and destroys the wxWidgets application via FFI.
 ///
