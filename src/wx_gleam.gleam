@@ -15,16 +15,19 @@
 //// ## Basic Usage
 ////
 //// The simplest way to use wx_gleam is with the `with_app` function, which
-//// handles initialization and cleanup automatically:
+//// handles initialization and cleanup automatically. You can also combine it
+//// with `with_frame` for cleaner frame creation:
 ////
 //// ```gleam
 //// import wx_gleam
 ////
 //// pub fn main() {
 ////   use wx_app <- wx_gleam.with_app()
-////   let assert Ok(wx_frame) = wx_gleam.create_frame(wx_app, "My App")
-////   wx_gleam.show_frame(wx_frame)
-////   wx_gleam.connect_close_event(wx_frame)
+////   use frame <- wx_gleam.with_frame(wx_app, "My App")
+////   
+////   let assert Ok(_button) = wx_gleam.create_button(frame, "Click Me!")
+////   wx_gleam.show_frame(frame)
+////   wx_gleam.connect_close_event(frame)
 ////   wx_gleam.await_close_message(fn(_) { Nil })
 //// }
 //// ```
@@ -190,6 +193,55 @@ pub fn with_app(mainloop: fn(WxApp) -> Nil) -> Nil {
 
   // When all processes are done, run destroy()
   destroy()
+}
+
+/// A convenience function that creates a frame, runs a mainloop with it,
+/// and handles the setup automatically.
+///
+/// This function provides a convenient way to work with frames using Gleam's
+/// `use` syntax. It creates a frame with the specified title and passes it to
+/// your mainloop function. This is useful when you want to encapsulate frame
+/// creation and usage in a clean, resource-safe pattern.
+///
+/// ## Parameters
+///
+/// - `app` - The WxApp instance obtained from `init_wx()` or `with_app()`
+/// - `title` - The title to display in the window's title bar
+/// - `mainloop` - A function that receives the WxFrame instance and contains
+///   your frame-specific logic. This function will be executed after the frame
+///   is created.
+///
+/// ## Behavior
+///
+/// 1. Creates a new frame with the specified title (asserts success)
+/// 2. Executes your mainloop function with the WxFrame instance
+/// 3. Returns after the mainloop completes
+///
+/// ## Example
+///
+/// ```gleam
+/// use wx_app <- wx_gleam.with_app()
+/// use frame <- wx_gleam.with_frame(wx_app, "My Window")
+/// 
+/// let assert Ok(_button) = create_button(frame, "Click Me!")
+/// show_frame(frame)
+/// connect_close_event(frame)
+/// await_close_message(fn(_) { Nil })
+/// ```
+///
+/// ## Note
+///
+/// This function will panic if frame creation fails. If you need to handle
+/// frame creation errors, use `create_frame()` directly.
+pub fn with_frame(
+  app: WxApp,
+  title: String,
+  mainloop: fn(WxFrame) -> Nil,
+) -> Nil {
+  let assert Ok(frame): Result(WxFrame, Nil) = create_frame(app, title)
+
+  // Run mainloop which is defined by User
+  mainloop(frame)
 }
 
 /// Creates a new frame (window) with the specified title.
