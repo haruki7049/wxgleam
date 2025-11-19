@@ -19,6 +19,16 @@ import gleam/dynamic.{type Dynamic}
 import gleam/dynamic/decode
 import gleam/string
 
+// Constants for close event type strings
+/// Constant for the close_window event type string
+pub const close_window_event = "close_window"
+
+/// Constant for the end_session event type string
+pub const end_session_event = "end_session"
+
+/// Constant for the query_end_session event type string
+pub const query_end_session_event = "query_end_session"
+
 /// Represents the type of close event.
 ///
 /// Different close event types indicate different reasons why a window or
@@ -104,20 +114,20 @@ pub type CloseEvent {
 /// decoding automatically and provides a typed handler interface.
 pub fn decode_close_event(msg: Dynamic) -> Result(CloseEvent, String) {
   // Decoder for 2-element tuples where both elements are strings (atoms decode to strings)
-  // Using decode.field to access tuple indices 0 and 1
+  // Using decode.element to access tuple elements at positions 0 and 1
   let tuple_decoder = {
-    use tag <- decode.field(0, decode.string)
-    use type_str <- decode.field(1, decode.string)
+    use tag <- decode.element(0, decode.string)
+    use type_str <- decode.element(1, decode.string)
     decode.success(#(tag, type_str))
   }
 
   case decode.run(msg, tuple_decoder) {
     Ok(#("close", type_str)) -> {
-      // Decode the type string to CloseEventType
+      // Decode the type string to CloseEventType using constants
       case type_str {
-        "close_window" -> Ok(Close(CloseWindow))
-        "end_session" -> Ok(Close(EndSession))
-        "query_end_session" -> Ok(Close(QueryEndSession))
+        _ if type_str == close_window_event -> Ok(Close(CloseWindow))
+        _ if type_str == end_session_event -> Ok(Close(EndSession))
+        _ if type_str == query_end_session_event -> Ok(Close(QueryEndSession))
         _ -> {
           let raw = string.inspect(msg)
           Error(

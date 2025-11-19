@@ -78,9 +78,9 @@ fn event_handler(event: events.CloseEvent) -> Nil {
   case event {
     events.Close(event_type) -> {
       let type_str = case event_type {
-        events.CloseWindow -> "close_window"
-        events.EndSession -> "end_session"
-        events.QueryEndSession -> "query_end_session"
+        events.CloseWindow -> events.close_window_event
+        events.EndSession -> events.end_session_event
+        events.QueryEndSession -> events.query_end_session_event
       }
       io.println("Close event received: " <> type_str)
     }
