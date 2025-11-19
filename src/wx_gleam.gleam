@@ -233,7 +233,11 @@ pub fn with_app(mainloop: fn(WxApp) -> Nil) -> Nil {
 ///
 /// This function will panic if frame creation fails. If you need to handle
 /// frame creation errors, use `create_frame()` directly.
-pub fn with_frame(app: WxApp, title: String, mainloop: fn(WxFrame) -> Nil) -> Nil {
+pub fn with_frame(
+  app: WxApp,
+  title: String,
+  mainloop: fn(WxFrame) -> Nil,
+) -> Nil {
   let assert Ok(frame): Result(WxFrame, Nil) = create_frame(app, title)
 
   // Run mainloop which is defined by User
