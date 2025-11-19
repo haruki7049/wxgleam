@@ -146,36 +146,92 @@ create_button(Frame, ID, Label) ->
     {ok, Button}.
 
 
-%%% @doc Connect a close event handler to a frame.
+%%% @doc Get the default list of close event subtypes.
 %%%
-%%% This function sets up the frame to send close_window events to the calling
+%%% This function returns all the wxCloseEventType subtypes that should be
+%%% connected by default. These events cover different scenarios when a
+%%% window or application is being closed.
+%%%
+%%% <h3>Event Types</h3>
+%%% <ul>
+%%%   <li>`close_window' - User clicked close button or pressed Alt+F4</li>
+%%%   <li>`end_session' - System is shutting down or logging out</li>
+%%%   <li>`query_end_session' - System is querying if it's safe to close</li>
+%%% </ul>
+%%%
+%%% @returns A list of event type atoms
+%%% @end
+default_close_subtypes() ->
+    [close_window, end_session, query_end_session].
+
+
+%%% @doc Connect multiple event types to a frame.
+%%%
+%%% This helper function connects each event type in the provided list to
+%%% the specified frame. All events will be sent to the calling process.
+%%%
+%%% @param Frame The frame to connect events to
+%%% @param Events A list of event type atoms to connect
+%%% @returns `ok' after all events are connected
+%%% @end
+connect_events(Frame, Events) ->
+    lists:foreach(fun(E) -> wxFrame:connect(Frame, E) end, Events),
+    ok.
+
+
+%%% @doc Connect close event handler(s) to a frame.
+%%%
+%%% This function sets up the frame to send close events to the calling
 %%% process when the user attempts to close the window. These events can be
 %%% received and handled using `await_close_message/1'.
 %%%
-%%% <h3>Event Handling</h3>
-%%% <p>After calling this function, the frame will send a wx event record with
-%%% event type `close_window' to the Erlang process that called this function.
-%%% The event is sent when the user clicks the close button, uses Alt+F4, or
-%%% otherwise attempts to close the window.</p>
+%%% <h3>Usage Patterns</h3>
+%%% <ul>
+%%%   <li>`connect_close_event(Frame)' - Connects all close subtypes (default)</li>
+%%%   <li>`connect_close_event({Frame, Events})' - Connects specific event types</li>
+%%% </ul>
 %%%
-%%% @param Frame The frame to connect the close event to (from `create_frame/2')
+%%% <h3>Event Types</h3>
+%%% <p>By default, this function connects all wxCloseEventType subtypes:
+%%% close_window, end_session, and query_end_session. To connect only specific
+%%% event types, pass a tuple with the frame and a list of event atoms.</p>
+%%%
+%%% <h3>Event Handling</h3>
+%%% <p>After calling this function, the frame will send wx event records to
+%%% the Erlang process that called this function. The events are sent when
+%%% the user clicks the close button, when the system is shutting down, or
+%%% when other close-related events occur.</p>
+%%%
+%%% @param Frame The frame to connect the close event to (from `create_frame/2'),
+%%%        or a tuple `{Frame, Events}' where Events is a list of event atoms
 %%% @returns `ok' - The event connection always succeeds for a valid frame
 %%% @end
+connect_close_event({Frame, Events}) when is_list(Events) ->
+    connect_events(Frame, Events);
 connect_close_event(Frame) ->
-    wxFrame:connect(Frame, close_window),
+    % Backward compatible: connect all close subtypes by default
+    connect_events(Frame, default_close_subtypes()),
     ok.
 
 
 %%% @doc Wait for and handle messages, including close events.
 %%%
-%%% This function blocks the calling process until a close_window event is
-%%% received. It implements a message loop that can handle other messages while
-%%% waiting for the close event.
+%%% This function blocks the calling process until a close event is received.
+%%% It implements a message loop that can handle other messages while waiting
+%%% for the close event. When a close event is detected, it normalizes the
+%%% event to a simple `{close, Type}' tuple and passes it to the handler before
+%%% returning.
 %%%
 %%% <h3>Message Loop Behavior</h3>
 %%% <ol>
 %%%   <li>Enter a receive block to wait for messages</li>
-%%%   <li>If a `close_window' event is received, return `ok' and exit</li>
+%%%   <li>If a wxClose event is received:
+%%%     <ul>
+%%%       <li>Extract the event Type (close_window, end_session, or query_end_session)</li>
+%%%       <li>Call Handler with `{close, Type}' tuple for Gleam-side handling</li>
+%%%       <li>Return `ok' and exit the loop</li>
+%%%     </ul>
+%%%   </li>
 %%%   <li>If any other message is received:
 %%%     <ul>
 %%%       <li>Pass it to the Handler function</li>
@@ -184,22 +240,30 @@ connect_close_event(Frame) ->
 %%%   </li>
 %%% </ol>
 %%%
+%%% <h3>Close Event Normalization</h3>
+%%% <p>This function normalizes wxClose records into simple `{close, Type}' tuples,
+%%% making them easier to handle in Gleam code. The Type atom indicates which
+%%% close event subtype was received (close_window, end_session, or query_end_session).</p>
+%%%
 %%% <h3>Use Cases</h3>
 %%% <ul>
 %%%   <li>Keeping the application alive until the user closes a window</li>
+%%%   <li>Handling different types of close events (user close vs system shutdown)</li>
 %%%   <li>Processing other messages (e.g., button clicks) while waiting</li>
 %%%   <li>Implementing custom message handling logic</li>
 %%% </ul>
 %%%
-%%% @param Handler A Gleam function that will be called with any non-close
-%%%                messages. The function receives the message as a dynamic
-%%%                value and should return Nil.
-%%% @returns `ok' when a close_window event is received
+%%% @param Handler A Gleam function that will be called with messages. For close
+%%%                events, receives `{close, Type}' tuple. For other messages,
+%%%                receives the message as a dynamic value. Should return Nil.
+%%% @returns `ok' when a close event is received and handled
 %%% @end
 await_close_message(Handler) ->
     receive
-        % Message matching wxEVT_CLOSE_WINDOW - exit the receive loop
-        #wx{event = #wxClose{}} ->
+        % Message matching wxClose event - normalize and pass to handler, then exit
+        #wx{event = #wxClose{type = Type}} ->
+            % Normalize the close event to {close, Type} for Gleam-side handling
+            Handler({close, Type}),
             ok;
         % Any other message - pass to the handler and continue waiting
         OtherMessage ->
