@@ -16,6 +16,7 @@
 //// However, you can also use them directly if you need custom event handling.
 
 import gleam/dynamic.{type Dynamic}
+import gleam/dynamic/decode
 import gleam/string
 
 /// Represents the type of close event.
@@ -103,9 +104,14 @@ pub type CloseEvent {
 /// decoding automatically and provides a typed handler interface.
 pub fn decode_close_event(msg: Dynamic) -> Result(CloseEvent, String) {
   // Decoder for 2-element tuples where both elements are strings (atoms decode to strings)
-  let tuple_decoder = dynamic.tuple2(dynamic.string, dynamic.string)
+  // Using decode.field to access tuple indices 0 and 1
+  let tuple_decoder = {
+    use tag <- decode.field(0, decode.string)
+    use type_str <- decode.field(1, decode.string)
+    decode.success(#(tag, type_str))
+  }
 
-  case tuple_decoder(msg) {
+  case decode.run(msg, tuple_decoder) {
     Ok(#("close", type_str)) -> {
       // Decode the type string to CloseEventType
       case type_str {
