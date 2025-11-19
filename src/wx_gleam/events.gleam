@@ -114,10 +114,10 @@ pub type CloseEvent {
 /// decoding automatically and provides a typed handler interface.
 pub fn decode_close_event(msg: Dynamic) -> Result(CloseEvent, String) {
   // Decoder for 2-element tuples where both elements are strings (atoms decode to strings)
-  // Using decode.element to access tuple elements at positions 0 and 1
+  // Using decode.field to access tuple indices 0 and 1
   let tuple_decoder = {
-    use tag <- decode.element(0, decode.string)
-    use type_str <- decode.element(1, decode.string)
+    use tag <- decode.field(0, decode.string)
+    use type_str <- decode.field(1, decode.string)
     decode.success(#(tag, type_str))
   }
 
