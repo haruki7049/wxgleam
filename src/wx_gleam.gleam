@@ -339,6 +339,11 @@ pub fn create_frame(app: WxApp, title: String) -> Result(WxFrame, Nil) {
 /// - `frame` - The WxFrame to show. The frame should have been created using
 ///   `create_frame()` and may contain child widgets like buttons or text fields.
 ///
+/// ## Returns
+///
+/// Returns the same `WxFrame` that was passed in. This allows for method chaining
+/// with other frame operations.
+///
 /// ## Example
 ///
 /// ```gleam
@@ -398,6 +403,11 @@ pub fn create_button(frame: WxFrame, label: String) -> Result(WxButton, Nil) {
 ///
 /// - `frame` - The WxFrame to connect the close event to. This should be a
 ///   frame created with `create_frame()`.
+///
+/// ## Returns
+///
+/// Returns the same `WxFrame` that was passed in. This allows for method chaining
+/// with other frame operations.
 ///
 /// ## Example
 ///
