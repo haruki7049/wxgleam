@@ -49,9 +49,10 @@ pub fn main() {
   use frame <- wx_gleam.with_frame(wx_app, "Gleam WxApp")
   use _button <- wx_gleam.with_button(frame, "Click Me!")
 
-  wx_gleam.show_frame(frame)
+  frame
+  |> wx_gleam.show_frame()
+  |> wx_gleam.connect_close_event()
 
-  wx_gleam.connect_close_event(frame)
   wx_gleam.await_close_event(event_handler)
 }
 
