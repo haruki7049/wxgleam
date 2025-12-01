@@ -29,6 +29,7 @@
          show_frame/1,
          create_button/3,
          create_text_ctrl/3,
+         create_checkbox/3,
          connect_close_event/1,
          await_close_message/1,
          destroy/0]).
@@ -177,6 +178,38 @@ create_text_ctrl(Frame, ID, Value) ->
     % Create a text control as a child of the Frame
     TextCtrl = wxTextCtrl:new(Frame, ID, [{value, ValueList}]),
     {ok, TextCtrl}.
+
+
+%%% @doc Create a checkbox widget with the specified label.
+%%%
+%%% This function creates a wxCheckBox as a child widget of the specified frame.
+%%% The checkbox allows users to toggle between checked and unchecked states.
+%%% It will be visible within the frame's client area.
+%%%
+%%% <h3>Type Conversion</h3>
+%%% <p>The label parameter is a Gleam string (binary) which is converted to an
+%%% Erlang string (list) using `binary_to_list/1' before being passed to wxCheckBox.</p>
+%%%
+%%% <h3>CheckBox Properties</h3>
+%%% <ul>
+%%%   <li>Parent: The specified frame</li>
+%%%   <li>ID: As specified (use -1 for wxID_ANY to auto-assign)</li>
+%%%   <li>Label: The text displayed next to the checkbox</li>
+%%%   <li>Initial state: Unchecked</li>
+%%% </ul>
+%%%
+%%% @param Frame The parent frame that will contain the checkbox
+%%% @param ID The widget ID (use -1 for wxID_ANY to let wx auto-assign an ID)
+%%% @param Label The checkbox label as a binary string (Gleam String)
+%%% @returns `{ok, CheckBox}' with the created checkbox reference. The checkbox
+%%%          is guaranteed to be valid and ready to use.
+%%% @end
+create_checkbox(Frame, ID, Label) ->
+    % Convert Gleam's String (Binary) to Erlang's String (List) for the label
+    LabelList = binary_to_list(Label),
+    % Create a checkbox as a child of the Frame
+    CheckBox = wxCheckBox:new(Frame, ID, LabelList, []),
+    {ok, CheckBox}.
 
 
 %%% @doc Connect a close event handler to a frame.

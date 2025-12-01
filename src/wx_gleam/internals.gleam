@@ -15,7 +15,7 @@
 //// ## For Library Developers
 ////
 //// This module defines:
-//// - Opaque types for wx objects (WxApp, WxFrame, WxButton)
+//// - Opaque types for wx objects (WxApp, WxFrame, WxButton, WxCheckBox)
 //// - FFI function declarations using the `@external` attribute
 //// - Direct mappings to Erlang wx_ffi module functions
 ////
@@ -53,6 +53,13 @@ pub type WxButton
 /// text control object. It is an opaque reference to a wxTextCtrl widget
 /// in the Erlang wx system.
 pub type WxTextCtrl
+
+/// Opaque type representing a wxWidgets checkbox control.
+///
+/// This type is implemented in Erlang and represents the underlying wx
+/// checkbox object. It is an opaque reference to a wxCheckBox widget
+/// in the Erlang wx system.
+pub type WxCheckBox
 
 /// Initializes the wxWidgets application via FFI.
 ///
@@ -155,6 +162,27 @@ pub fn create_text_ctrl(
   id: Int,
   value: String,
 ) -> Result(WxTextCtrl, dynamic.Dynamic)
+
+/// Creates a checkbox with the specified ID and label inside a frame via FFI.
+///
+/// This is the Erlang FFI binding that creates a wx checkbox.
+///
+/// ## Parameters
+///
+/// - `frame` - The parent frame that will contain the checkbox
+/// - `id` - The widget ID (use -1 for wxID_ANY)
+/// - `label` - The text to display next to the checkbox
+///
+/// ## Returns
+///
+/// - `Ok(WxCheckBox)` - The created checkbox on success
+/// - `Error(dynamic.Dynamic)` - An error if checkbox creation fails
+@external(erlang, "wx_ffi", "create_checkbox")
+pub fn create_checkbox(
+  frame: WxFrame,
+  id: Int,
+  label: String,
+) -> Result(WxCheckBox, dynamic.Dynamic)
 
 /// Cleans up and destroys the wxWidgets application via FFI.
 ///

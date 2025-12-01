@@ -124,6 +124,20 @@ pub type WxButton =
 pub type WxTextCtrl =
   internals.WxTextCtrl
 
+/// Represents a wxWidgets checkbox control.
+///
+/// A checkbox is a GUI control that allows users to toggle between checked
+/// and unchecked states. Checkboxes display a label next to a clickable box.
+///
+/// ## Properties
+///
+/// - Displays a label next to a clickable checkbox
+/// - Can be toggled between checked and unchecked states
+/// - Must be a child of a frame or other container widget
+/// - Automatically assigned an ID if created with `create_checkbox()`
+pub type WxCheckBox =
+  internals.WxCheckBox
+
 // --- Constants ---
 
 /// A constant representing wxID_ANY (-1).
@@ -363,6 +377,57 @@ pub fn with_text_ctrl(
   mainloop(text_ctrl)
 }
 
+/// A convenience function that creates a checkbox, runs a mainloop with it,
+/// and handles the setup automatically.
+///
+/// This function provides a convenient way to work with checkboxes using 
+/// Gleam's `use` syntax. It creates a checkbox with the specified label and
+/// passes it to your mainloop function. This is useful when you want to
+/// encapsulate checkbox creation and usage in a clean, resource-safe pattern.
+///
+/// ## Parameters
+///
+/// - `frame` - The WxFrame parent that will contain the checkbox
+/// - `label` - The text to display next to the checkbox
+/// - `mainloop` - A function that receives the WxCheckBox instance and contains
+///   your checkbox-specific logic. This function will be executed after the
+///   checkbox is created.
+///
+/// ## Behavior
+///
+/// 1. Creates a new checkbox with the specified label (asserts success)
+/// 2. Executes your mainloop function with the WxCheckBox instance
+/// 3. Returns after the mainloop completes
+///
+/// ## Example
+///
+/// ```gleam
+/// use wx_app <- wx_gleam.with_app()
+/// use frame <- wx_gleam.with_frame(wx_app, "My Window")
+/// use checkbox <- wx_gleam.with_checkbox(frame, "Enable feature")
+/// 
+/// // Checkbox is now created and available
+/// show_frame(frame)
+/// connect_close_event(frame)
+/// await_close_event(fn(_) { Nil })
+/// ```
+///
+/// ## Note
+///
+/// This function will panic if checkbox creation fails. If you need to
+/// handle checkbox creation errors, use `create_checkbox()` directly.
+pub fn with_checkbox(
+  frame: WxFrame,
+  label: String,
+  mainloop: fn(WxCheckBox) -> Nil,
+) -> Nil {
+  let assert Ok(checkbox): Result(WxCheckBox, Nil) =
+    create_checkbox(frame, label)
+
+  // Run mainloop which is defined by User
+  mainloop(checkbox)
+}
+
 /// Creates a new frame (window) with the specified title.
 ///
 /// A frame is a top-level window that can contain other GUI components like
@@ -496,6 +561,44 @@ pub fn create_text_ctrl(
   value: String,
 ) -> Result(WxTextCtrl, Nil) {
   internals.create_text_ctrl(frame, id_any, value)
+  |> result.map_error(fn(_) { Nil })
+}
+
+/// Creates a checkbox with the specified label inside a frame.
+///
+/// The checkbox is created as a child widget of the specified frame and will
+/// be automatically assigned an ID using wxID_ANY (-1). The checkbox will be
+/// visible within the frame's client area and allows users to toggle between
+/// checked and unchecked states.
+///
+/// ## Parameters
+///
+/// - `frame` - The parent frame that will contain the checkbox. The checkbox
+///   will be positioned within this frame's client area.
+/// - `label` - The text to display next to the checkbox. This should describe
+///   the option that the checkbox controls.
+///
+/// ## Returns
+///
+/// - `Ok(WxCheckBox)` - The created checkbox on success
+/// - `Error(Nil)` - An error if checkbox creation fails (rare, but possible
+///   if the frame is invalid or the wx system is in an invalid state)
+///
+/// ## Example
+///
+/// ```gleam
+/// let assert Ok(frame) = create_frame(wx_app, "My Window")
+/// let assert Ok(checkbox) = create_checkbox(frame, "Enable feature")
+/// show_frame(frame)
+/// ```
+///
+/// ## Note
+///
+/// This is a convenience function that uses `id_any` constant internally. For
+/// more control over checkbox IDs or to handle checkbox events, you may need to
+/// use the lower-level FFI functions in the `internals` module.
+pub fn create_checkbox(frame: WxFrame, label: String) -> Result(WxCheckBox, Nil) {
+  internals.create_checkbox(frame, id_any, label)
   |> result.map_error(fn(_) { Nil })
 }
 
