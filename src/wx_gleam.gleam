@@ -36,10 +36,25 @@ fn external_new_with(options: List(NewOption)) -> WxObject
 @external(erlang, "wx", "new")
 fn external_new() -> WxObject
 
-pub fn new_with(options: List(NewOption)) -> WxObject {
-  external_new_with(options)
+fn new(options: List(NewOption)) -> WxObject {
+  case options {
+    [] -> external_new()
+    v -> external_new_with(v)
+  }
 }
 
-pub fn new() -> WxObject {
-  external_new()
+@external(erlang, "wx", "destroy")
+fn destroy() -> Nil
+
+pub fn start() -> Result(Nil, Nil) {
+  case ensure_all_started("wx" |> atom.create()) {
+    Ok(_) -> Ok(Nil)
+    Error(_) -> Error(Nil)
+  }
+}
+
+pub fn handle_app(options: List(NewOption), mainloop: fn (WxObject) -> Nil) -> Nil {
+  let wx_object: WxObject = new(options)
+  mainloop(wx_object)
+  destroy()
 }
