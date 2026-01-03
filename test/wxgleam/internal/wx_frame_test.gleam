@@ -29,7 +29,7 @@ pub fn new_test() {
 
   let _return: Bool = wx_frame.show(new_frame, [])
 
-  process.sleep(3000)
+  process.sleep(500)
 
   wx.destroy()
 }
