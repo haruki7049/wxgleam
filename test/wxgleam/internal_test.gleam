@@ -11,3 +11,13 @@ pub fn null_test() {
   |> internal.get_object_type()
   |> should.equal(atom.create("wx"))
 }
+
+pub fn new_test() {
+  let wx_new_object: internal.WxObject = internal.new([])
+
+  wx_new_object |> internal.is_null() |> should.be_true()
+  wx_new_object |> internal.equal(internal.null()) |> should.be_true()
+  wx_new_object
+  |> internal.get_object_type()
+  |> should.equal(atom.create("wx"))
+}
