@@ -15,3 +15,18 @@ pub fn default_test() {
 
   wx.destroy()
 }
+
+pub fn new_test() {
+  let _new_object: wx.WxObject = wx.new([])
+  let new_frame: wx.WxObject = wx_frame.new(wx.null(), -1, <<"HOGE">>, [])
+
+  new_frame |> wx.is_null() |> should.be_false()
+  new_frame |> wx.equal(wx.null()) |> should.be_false()
+  new_frame
+  |> wx.get_object_type()
+  |> should.equal(atom.create("wxFrame"))
+
+  let _return: Bool = wx_frame.show(new_frame, [])
+
+  wx.destroy()
+}
