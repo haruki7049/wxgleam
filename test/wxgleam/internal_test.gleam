@@ -7,5 +7,5 @@ pub fn null_test() {
 
   wx_null_object |> internal.is_null() |> should.be_true()
   wx_null_object |> internal.equal(internal.null()) |> should.be_true()
-  wx_null_object |> internal.get_object_type() |> should.equal(atom.create("Wx"))
+  wx_null_object |> internal.get_object_type() |> should.equal(atom.create("wx"))
 }
