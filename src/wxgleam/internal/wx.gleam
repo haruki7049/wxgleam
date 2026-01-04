@@ -2,7 +2,9 @@ import gleam/erlang/atom
 
 pub type WxObject
 
-pub type NewOption
+pub type NewOption {
+  SilentStart(Bool)
+}
 
 @external(erlang, "wx", "new")
 pub fn new(options: List(NewOption)) -> WxObject
