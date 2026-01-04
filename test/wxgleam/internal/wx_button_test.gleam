@@ -45,7 +45,7 @@ pub fn button_show_test() {
 
   let _return: Bool = wx_frame.show(button_test_frame, [])
 
-  process.sleep(1000)
+  process.sleep(500)
 
   wx.destroy()
 }
