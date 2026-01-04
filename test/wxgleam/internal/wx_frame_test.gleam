@@ -8,7 +8,8 @@ pub fn default_test() {
   let _new_object: wx.WxObject = wx.new([])
   let default_frame: wx.WxObject = wx_frame.default()
 
-  default_frame |> wx.is_null() |> should.be_false() default_frame |> wx.equal(wx.null()) |> should.be_false()
+  default_frame |> wx.is_null() |> should.be_false()
+  default_frame |> wx.equal(wx.null()) |> should.be_false()
   default_frame
   |> wx.get_object_type()
   |> should.equal(atom.create("wxFrame"))
@@ -35,7 +36,11 @@ pub fn new_test() {
 
 pub fn new_with_options_test() {
   let _new_object: wx.WxObject = wx.new([])
-  let new_frame: wx.WxObject = wx_frame.new(wx.null(), -1, <<"NEW WITH OPTIONS TEST">>, [wx_frame.Pos(#(100, 100)), wx_frame.Size(#(10, 10))])
+  let new_frame: wx.WxObject =
+    wx_frame.new(wx.null(), -1, <<"NEW WITH OPTIONS TEST">>, [
+      wx_frame.Pos(#(100, 100)),
+      wx_frame.Size(#(10, 10)),
+    ])
 
   new_frame |> wx.is_null() |> should.be_false()
   new_frame |> wx.equal(wx.null()) |> should.be_false()

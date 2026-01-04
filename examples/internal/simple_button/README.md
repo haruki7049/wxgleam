@@ -6,6 +6,7 @@
 ```sh
 gleam add simple_button@1
 ```
+
 ```gleam
 import simple_button
 

@@ -1,5 +1,5 @@
-import gleam/erlang/process
 import gleam/erlang/atom
+import gleam/erlang/process
 import gleeunit/should
 import wxgleam/internal/wx
 import wxgleam/internal/wx_button
@@ -33,7 +33,8 @@ pub fn new_test() {
 
 pub fn button_show_test() {
   let _new_object: wx.WxObject = wx.new([])
-  let button_test_frame: wx.WxObject = wx_frame.new(wx.null(), -1, <<"BUTTON TEST FRAME">>, [])
+  let button_test_frame: wx.WxObject =
+    wx_frame.new(wx.null(), -1, <<"BUTTON TEST FRAME">>, [])
   let default_button: wx.WxObject = wx_button.default()
 
   default_button |> wx.is_null() |> should.be_false()

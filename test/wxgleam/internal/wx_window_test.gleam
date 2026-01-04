@@ -1,5 +1,5 @@
-import gleam/erlang/process
 import gleam/erlang/atom
+import gleam/erlang/process
 import gleeunit/should
 import wxgleam/internal/wx
 import wxgleam/internal/wx_window

@@ -6,6 +6,7 @@
 ```sh
 gleam add simple_frame@1
 ```
+
 ```gleam
 import simple_frame
 
